@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Homework-2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #c9eaff, #f5f5f7);
+            background-attachment: fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            color: #4a90e2;
+            margin-bottom: 30px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        li {
+            background: white;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        a {
+            text-decoration: none;
+            font-size: 1.2rem;
+            color: #4a90e2;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #3a78c2;
+            text-decoration: underline;
+        }
+
+        .task-description {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Vue Homework-1</h1>
+    <ul>
+        <li>
+            <a href="./tasks/task_1.html">Завдання 1</a>
+            <div class="task">
+                <p class="task-description">
+                    Перекладач. Користувачу виводять змішані картки з словами на англійській і українській мові. Користувач поступово клікає
+                    на картки (виділяємо синьою рамкою). Якщо знайдено правильні пари карток, що відповідають одному слову, то видаляємо ці
+                    картки. Інакше - виділяємо червоною рамкою і через секунду забираємо рамку.
+                </p>
+            </div>
+        </li>
+        <li>
+            <a href="./tasks/task_2.html">Завдання 2</a>
+            <div class="task">
+                <p class="task-description">
+                    Тренажер додавання. Вводимо загальну кількість прикладів і натискаємо на кнопку «Старт». Після запуску (натисканні на
+                    кнопку «Старт») кожні 10 секунд (10 секунд між завданнями) користувачу задають випадковий приклад з додавання двох цифр
+                    і робиться перевірка. Формується список тих, які він відповів правильно, і які він відповів неправильно. Загальна
+                    кількість прикладів вводиться.
+                   
+                </p>
+            </div>
+        </li>
+       
+    </ul>
+</body>
+</html>

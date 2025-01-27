@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue.js Math Test</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="../styles/task_2.css">
+</head>
+
+<body>
+    <div id="app">
+        <div v-if="isTestRunning && secondsLeft !== null" class="timer">
+            {{ formattedSecondsLeft }}
+        </div>
+
+        <form v-if="!isTestRunning && currentTaskNum === null" @submit.prevent="startTest">
+            <label>
+                Введіть кількість прикладів:
+                <input type="number" min="1" v-model.number="taskCount" required>
+            </label>
+            <button type="submit" :disabled="!taskCount">Почати тест</button>
+        </form>
+
+        <form v-if="isTestRunning && currentTaskNum >= 0" @submit.prevent="submitAnswer">
+            <label>
+                {{ num1 }} + {{ num2 }} =
+                <input type="number" v-model.number="userAnswer" required>
+            </label>
+            <button type="submit">Зберегти відповідь</button>
+        </form>
+        <div class="results-wrapper" v-if="!isTestRunning && currentTaskNum === 0">
+            <div class="answers-wrapper">
+                <div>
+                    <h3>Правильні відповіді: {{ rightAnswers.length }}</h3>
+                    <ul class="right-answers-list">
+                        <li class="right-answer-list-item" v-for="({ num1, num2, userAnswer }) in rightAnswers"
+                            :key="num1 + '-' + num2">
+                            {{ num1 }} + {{ num2 }} = {{ userAnswer }}
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Неправильні відповіді: {{ wrongAnswers.length }}</h3>
+                    <ul class="wrong-answers-list">
+                        <li class="wrong-answer-list-item" v-for="({ num1, num2, userAnswer }) in wrongAnswers"
+                            :key="num1 + '-' + num2">
+                            {{ num1 }} + {{ num2 }} ≠ {{ userAnswer }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button @click="resetTest">Зробити наступну спробу</button>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    taskCount: null,
+                    currentTaskNum: null,
+                    num1: null,
+                    num2: null,
+                    userAnswer: null,
+                    answers: [],
+                    secondsLeft: null,
+                    timerId: null,
+                    isTestRunning: false,
+                };
+            },
+            methods: {
+                generateRandom() {
+                    return Math.floor(Math.random() * 10) + 1;
+                },
+                startTest() {
+                    this.currentTaskNum = this.taskCount;
+                    this.isTestRunning = true;
+                    this.generateNewTask();
+                    this.startTimer();
+                },
+                generateNewTask() {
+                    console.log("Current Task:", this.currentTaskNum, "Num1:", this.num1, "Num2:", this.num2);
+                    if (this.num1 !== null && this.num2 !== null) {
+                        const taskData = {
+                            num1: this.num1,
+                            num2: this.num2,
+                            userAnswer: this.userAnswer ?? null,
+                        };
+                        this.answers = [...this.answers, taskData];
+                    }
+
+                    this.currentTaskNum--;
+                    if (this.currentTaskNum < 0) {
+                        this.endTest();
+                        return;
+                    }
+                    this.num1 = this.generateRandom();
+                    this.num2 = this.generateRandom();
+                    this.userAnswer = null;
+
+                    console.log("New Task Generated:", this.num1, this.num2);
+                },
+
+                endTest() {
+                    clearInterval(this.timerId);
+                    this.timerId = null;
+                    this.secondsLeft = null;
+                    this.num1 = null;
+                    this.num2 = null;
+                    this.isTestRunning = false;
+                    this.currentTaskNum = 0;
+                },
+                startTimer() {
+                    this.secondsLeft = 10;
+                    this.timerId = setInterval(() => {
+                        this.secondsLeft--;
+
+                        if (this.secondsLeft < 0) {
+                            this.resetTimer();
+                            this.generateNewTask();
+                            if (this.currentTaskNum > 0) {
+                                this.resetTimer();
+                            }
+                        }
+                    }, 1000);
+                },
+                resetTimer() {
+                    clearInterval(this.timerId);
+                    this.timerId = null;
+
+                    if (this.currentTaskNum > 0) {
+                        this.startTimer();
+                    }
+                },
+                submitAnswer() {
+                    if (this.userAnswer !== null) {
+                        this.generateNewTask();
+                        this.resetTimer();
+                    }
+                },
+                resetTest() {
+                    this.taskCount = null;
+                    this.currentTaskNum = null;
+                    this.num1 = null;
+                    this.num2 = null;
+                    this.userAnswer = null;
+                    this.answers = [];
+                    this.secondsLeft = null;
+                    this.isTestRunning = false;
+                    clearInterval(this.timerId);
+                    this.timerId = null;
+                },
+            },
+            computed: {
+                formattedSecondsLeft() {
+                    return `00:${String(this.secondsLeft).padStart(2, '0')}`;
+                },
+                rightAnswers() {
+                    return this.answers.filter(
+                        ({ num1, num2, userAnswer }) => num1 + num2 === userAnswer
+                    );
+                },
+                wrongAnswers() {
+                    return this.answers.filter(
+                        ({ num1, num2, userAnswer }) => num1 + num2 !== userAnswer
+                    );
+                },
+            },
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

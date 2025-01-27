@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="../styles/task_1.css">
+</head>
+<body>
+    <div id="app">
+        <div class="english-wrapper">
+            <ul class="english-list">
+                <li v-for="{en, id} in words" class="english-list-item" :key="id" >
+                    <button :style="{borderColor: borderColor(id, 'en')}" :disabled="isDisabled" @click="onWordClick(id, 'en')">{{en}}</button>
+                </li>
+            </ul>
+        </div>
+        <div class="ukrainian-wrapper">
+            <ul class="ukrainian-list">
+                <li v-for="{ua, id} in words" class="ukrainian-list-item" :key="id" >
+                    <button :style="{borderColor: borderColor(id, 'ua')}" :disabled="isDisabled" @click="onWordClick(id, 'ua')">{{ua}}</button>
+                </li>
+            </ul>
+        </div>
+        <div v-if="removedIdList.length" class="correct-history">
+            <ul class="correct-history-list">
+                <li v-for="id in removedIdList" class="correct-history-item">
+                    {{deletedWord(id).en}} - {{deletedWord(id).ua}}
+                </li>
+            </ul>
+            
+        </div>
+    </div>
+    
+    <script>
+        const { createApp } = Vue
+        const words =[
+            {id: 1, en: "table", ua: "стіл"},
+            {id: 2, en: "car", ua: "машина"},
+            {id: 3, en: "bus", ua: "автобус"},
+            {id: 4, en: "man", ua: "чоловік"},
+            {id: 5, en: "boy", ua: "хлопчик"}
+        ];
+        createApp({
+            data() {
+                return {
+                    words: [...words],
+                    selectedEnglishId: null,
+                    selectedUaId: null,
+                    isDisabled: false,
+                    removedIdList: []
+                }
+            },
+            methods: {
+                borderColor(id, lang="ua") {
+                    let borderColor = "grey";
+                    if((lang==='en' && id===this.selectedEnglishId) ||(lang === 'ua' && id === this.selectedUaId) ) borderColor = "blue";
+                    if(this.selectedEnglishId && this.selectedUaId) {
+                        if((lang==="en"&&id=== this.selectedEnglishId && id!== this.selectedUaId)|| (lang === "ua" && id === this.selectedUaId && id !== this.selectedEnglishId )){
+                            borderColor = "red";
+                        }
+                    }
+                    return borderColor;
+                },
+                onWordClick(id, lang='ua') {
+
+                    if(lang==='ua') this.selectedUaId = id;
+                    if(lang==='en') this.selectedEnglishId = id;
+                    if(!this.selectedEnglishId|| !this.selectedUaId) return;
+                    this.isDisabled = true;
+
+                    
+                    setTimeout(() => {
+                        if (this.selectedEnglishId === this.selectedUaId) {
+                        const index = this.words.findIndex(word => word.id === this.selectedEnglishId);
+                        this.words.splice(index, 1);
+                        this.removedIdList.push(this.selectedEnglishId);
+                        }
+                        this.selectedUaId = null;
+                        this.selectedEnglishId= null;
+                        this.isDisabled = false;
+                    },1000);   
+                },
+                deletedWord(id) {
+                    return words.find(word => word.id === id);
+                }
+            },
+        }).mount('#app')
+    </script>  
+</body>
+</html>
